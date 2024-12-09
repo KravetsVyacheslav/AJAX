@@ -599,14 +599,14 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 var _fetchCountriesJs = require("./fetchCountries.js");
 var _fetchCountriesJsDefault = parcelHelpers.interopDefault(_fetchCountriesJs);
-var _lodashDebounce = require("lodash.debounce");
-var _lodashDebounceDefault = parcelHelpers.interopDefault(_lodashDebounce);
+var _debounce = require("lodash/debounce");
+var _debounceDefault = parcelHelpers.interopDefault(_debounce);
 var _core = require("@pnotify/core");
 var _pnotifyCss = require("@pnotify/core/dist/PNotify.css");
 var _brightThemeCss = require("@pnotify/core/dist/BrightTheme.css");
 const searchBox = document.getElementById('search-box');
 const countryInfo = document.getElementById('country-info');
-searchBox.addEventListener('input', (0, _lodashDebounceDefault.default)(onSearch, 500));
+searchBox.addEventListener('input', (0, _debounceDefault.default)(onSearch, 500));
 function onSearch(event) {
     const searchQuery = event.target.value.trim();
     if (searchQuery === '') {
@@ -643,7 +643,7 @@ function renderCountryInfo(country) {
     countryInfo.innerHTML = markup;
 }
 
-},{"./fetchCountries.js":"crHiB","lodash.debounce":"3JP5n","@pnotify/core":"9RSjy","@pnotify/core/dist/PNotify.css":"c4y47","@pnotify/core/dist/BrightTheme.css":"grIyt","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"crHiB":[function(require,module,exports,__globalThis) {
+},{"./fetchCountries.js":"crHiB","lodash/debounce":"bv6vy","@pnotify/core":"9RSjy","@pnotify/core/dist/PNotify.css":"c4y47","@pnotify/core/dist/BrightTheme.css":"grIyt","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"crHiB":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "default", ()=>fetchCountries);
@@ -684,51 +684,10 @@ exports.export = function(dest, destName, get) {
     });
 };
 
-},{}],"3JP5n":[function(require,module,exports,__globalThis) {
-/**
- * lodash (Custom Build) <https://lodash.com/>
- * Build: `lodash modularize exports="npm" -o ./`
- * Copyright jQuery Foundation and other contributors <https://jquery.org/>
- * Released under MIT license <https://lodash.com/license>
- * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
- * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- */ /** Used as the `TypeError` message for "Functions" methods. */ var global = arguments[3];
-var FUNC_ERROR_TEXT = 'Expected a function';
-/** Used as references for various `Number` constants. */ var NAN = 0 / 0;
-/** `Object#toString` result references. */ var symbolTag = '[object Symbol]';
-/** Used to match leading and trailing whitespace. */ var reTrim = /^\s+|\s+$/g;
-/** Used to detect bad signed hexadecimal string values. */ var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
-/** Used to detect binary string values. */ var reIsBinary = /^0b[01]+$/i;
-/** Used to detect octal string values. */ var reIsOctal = /^0o[0-7]+$/i;
-/** Built-in method references without a dependency on `root`. */ var freeParseInt = parseInt;
-/** Detect free variable `global` from Node.js. */ var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
-/** Detect free variable `self`. */ var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
-/** Used as a reference to the global object. */ var root = freeGlobal || freeSelf || Function('return this')();
-/** Used for built-in method references. */ var objectProto = Object.prototype;
-/**
- * Used to resolve the
- * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
- * of values.
- */ var objectToString = objectProto.toString;
+},{}],"bv6vy":[function(require,module,exports,__globalThis) {
+var isObject = require("3b174a999d6a40ac"), now = require("575b2317167ce20d"), toNumber = require("a13332670c5c0f63");
+/** Error message constants. */ var FUNC_ERROR_TEXT = 'Expected a function';
 /* Built-in method references for those with the same name as other `lodash` methods. */ var nativeMax = Math.max, nativeMin = Math.min;
-/**
- * Gets the timestamp of the number of milliseconds that have elapsed since
- * the Unix epoch (1 January 1970 00:00:00 UTC).
- *
- * @static
- * @memberOf _
- * @since 2.4.0
- * @category Date
- * @returns {number} Returns the timestamp.
- * @example
- *
- * _.defer(function(stamp) {
- *   console.log(_.now() - stamp);
- * }, _.now());
- * // => Logs the number of milliseconds it took for the deferred invocation.
- */ var now = function() {
-    return root.Date.now();
-};
 /**
  * Creates a debounced function that delays invoking `func` until after `wait`
  * milliseconds have elapsed since the last time the debounced function was
@@ -808,8 +767,8 @@ var FUNC_ERROR_TEXT = 'Expected a function';
         return leading ? invokeFunc(time) : result;
     }
     function remainingWait(time) {
-        var timeSinceLastCall = time - lastCallTime, timeSinceLastInvoke = time - lastInvokeTime, result = wait - timeSinceLastCall;
-        return maxing ? nativeMin(result, maxWait - timeSinceLastInvoke) : result;
+        var timeSinceLastCall = time - lastCallTime, timeSinceLastInvoke = time - lastInvokeTime, timeWaiting = wait - timeSinceLastCall;
+        return maxing ? nativeMin(timeWaiting, maxWait - timeSinceLastInvoke) : timeWaiting;
     }
     function shouldInvoke(time) {
         var timeSinceLastCall = time - lastCallTime, timeSinceLastInvoke = time - lastInvokeTime;
@@ -849,6 +808,7 @@ var FUNC_ERROR_TEXT = 'Expected a function';
             if (timerId === undefined) return leadingEdge(lastCallTime);
             if (maxing) {
                 // Handle invocations in a tight loop.
+                clearTimeout(timerId);
                 timerId = setTimeout(timerExpired, wait);
                 return invokeFunc(lastCallTime);
             }
@@ -860,6 +820,9 @@ var FUNC_ERROR_TEXT = 'Expected a function';
     debounced.flush = flush;
     return debounced;
 }
+module.exports = debounce;
+
+},{"3b174a999d6a40ac":"cGhqJ","575b2317167ce20d":"kOH6e","a13332670c5c0f63":"12NaH"}],"cGhqJ":[function(require,module,exports,__globalThis) {
 /**
  * Checks if `value` is the
  * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
@@ -886,53 +849,50 @@ var FUNC_ERROR_TEXT = 'Expected a function';
  * // => false
  */ function isObject(value) {
     var type = typeof value;
-    return !!value && (type == 'object' || type == 'function');
+    return value != null && (type == 'object' || type == 'function');
 }
+module.exports = isObject;
+
+},{}],"kOH6e":[function(require,module,exports,__globalThis) {
+var root = require("6439589d9d88d885");
 /**
- * Checks if `value` is object-like. A value is object-like if it's not `null`
- * and has a `typeof` result of "object".
+ * Gets the timestamp of the number of milliseconds that have elapsed since
+ * the Unix epoch (1 January 1970 00:00:00 UTC).
  *
  * @static
  * @memberOf _
- * @since 4.0.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ * @since 2.4.0
+ * @category Date
+ * @returns {number} Returns the timestamp.
  * @example
  *
- * _.isObjectLike({});
- * // => true
- *
- * _.isObjectLike([1, 2, 3]);
- * // => true
- *
- * _.isObjectLike(_.noop);
- * // => false
- *
- * _.isObjectLike(null);
- * // => false
- */ function isObjectLike(value) {
-    return !!value && typeof value == 'object';
-}
-/**
- * Checks if `value` is classified as a `Symbol` primitive or object.
- *
- * @static
- * @memberOf _
- * @since 4.0.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a symbol, else `false`.
- * @example
- *
- * _.isSymbol(Symbol.iterator);
- * // => true
- *
- * _.isSymbol('abc');
- * // => false
- */ function isSymbol(value) {
-    return typeof value == 'symbol' || isObjectLike(value) && objectToString.call(value) == symbolTag;
-}
+ * _.defer(function(stamp) {
+ *   console.log(_.now() - stamp);
+ * }, _.now());
+ * // => Logs the number of milliseconds it took for the deferred invocation.
+ */ var now = function() {
+    return root.Date.now();
+};
+module.exports = now;
+
+},{"6439589d9d88d885":"dSYUs"}],"dSYUs":[function(require,module,exports,__globalThis) {
+var freeGlobal = require("cd92e8811deaabf5");
+/** Detect free variable `self`. */ var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
+/** Used as a reference to the global object. */ var root = freeGlobal || freeSelf || Function('return this')();
+module.exports = root;
+
+},{"cd92e8811deaabf5":"kAk32"}],"kAk32":[function(require,module,exports,__globalThis) {
+/** Detect free variable `global` from Node.js. */ var global = arguments[3];
+var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
+module.exports = freeGlobal;
+
+},{}],"12NaH":[function(require,module,exports,__globalThis) {
+var baseTrim = require("261e89907fb89d78"), isObject = require("faaa289d287a34a5"), isSymbol = require("47b3bd23f771891");
+/** Used as references for various `Number` constants. */ var NAN = 0 / 0;
+/** Used to detect bad signed hexadecimal string values. */ var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
+/** Used to detect binary string values. */ var reIsBinary = /^0b[01]+$/i;
+/** Used to detect octal string values. */ var reIsOctal = /^0o[0-7]+$/i;
+/** Built-in method references without a dependency on `root`. */ var freeParseInt = parseInt;
 /**
  * Converts `value` to a number.
  *
@@ -963,11 +923,164 @@ var FUNC_ERROR_TEXT = 'Expected a function';
         value = isObject(other) ? other + '' : other;
     }
     if (typeof value != 'string') return value === 0 ? value : +value;
-    value = value.replace(reTrim, '');
+    value = baseTrim(value);
     var isBinary = reIsBinary.test(value);
     return isBinary || reIsOctal.test(value) ? freeParseInt(value.slice(2), isBinary ? 2 : 8) : reIsBadHex.test(value) ? NAN : +value;
 }
-module.exports = debounce;
+module.exports = toNumber;
+
+},{"261e89907fb89d78":"eUJZ3","faaa289d287a34a5":"cGhqJ","47b3bd23f771891":"i3BHC"}],"eUJZ3":[function(require,module,exports,__globalThis) {
+var trimmedEndIndex = require("985d3c9be7b51937");
+/** Used to match leading whitespace. */ var reTrimStart = /^\s+/;
+/**
+ * The base implementation of `_.trim`.
+ *
+ * @private
+ * @param {string} string The string to trim.
+ * @returns {string} Returns the trimmed string.
+ */ function baseTrim(string) {
+    return string ? string.slice(0, trimmedEndIndex(string) + 1).replace(reTrimStart, '') : string;
+}
+module.exports = baseTrim;
+
+},{"985d3c9be7b51937":"hHJmS"}],"hHJmS":[function(require,module,exports,__globalThis) {
+/** Used to match a single whitespace character. */ var reWhitespace = /\s/;
+/**
+ * Used by `_.trim` and `_.trimEnd` to get the index of the last non-whitespace
+ * character of `string`.
+ *
+ * @private
+ * @param {string} string The string to inspect.
+ * @returns {number} Returns the index of the last non-whitespace character.
+ */ function trimmedEndIndex(string) {
+    var index = string.length;
+    while(index-- && reWhitespace.test(string.charAt(index)));
+    return index;
+}
+module.exports = trimmedEndIndex;
+
+},{}],"i3BHC":[function(require,module,exports,__globalThis) {
+var baseGetTag = require("6118c0d5630f51ce"), isObjectLike = require("74644060ad1a1d3c");
+/** `Object#toString` result references. */ var symbolTag = '[object Symbol]';
+/**
+ * Checks if `value` is classified as a `Symbol` primitive or object.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a symbol, else `false`.
+ * @example
+ *
+ * _.isSymbol(Symbol.iterator);
+ * // => true
+ *
+ * _.isSymbol('abc');
+ * // => false
+ */ function isSymbol(value) {
+    return typeof value == 'symbol' || isObjectLike(value) && baseGetTag(value) == symbolTag;
+}
+module.exports = isSymbol;
+
+},{"6118c0d5630f51ce":"lOnbo","74644060ad1a1d3c":"3BLi4"}],"lOnbo":[function(require,module,exports,__globalThis) {
+var Symbol = require("68a84eb98c5d3fa2"), getRawTag = require("9b2aaf31b7bdd837"), objectToString = require("46d5beb3375f8a28");
+/** `Object#toString` result references. */ var nullTag = '[object Null]', undefinedTag = '[object Undefined]';
+/** Built-in value references. */ var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
+/**
+ * The base implementation of `getTag` without fallbacks for buggy environments.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @returns {string} Returns the `toStringTag`.
+ */ function baseGetTag(value) {
+    if (value == null) return value === undefined ? undefinedTag : nullTag;
+    return symToStringTag && symToStringTag in Object(value) ? getRawTag(value) : objectToString(value);
+}
+module.exports = baseGetTag;
+
+},{"68a84eb98c5d3fa2":"7lsL9","9b2aaf31b7bdd837":"995sO","46d5beb3375f8a28":"bmE3g"}],"7lsL9":[function(require,module,exports,__globalThis) {
+var root = require("9ff1abd51ad45ac0");
+/** Built-in value references. */ var Symbol = root.Symbol;
+module.exports = Symbol;
+
+},{"9ff1abd51ad45ac0":"dSYUs"}],"995sO":[function(require,module,exports,__globalThis) {
+var Symbol = require("e9b4533b2a68f814");
+/** Used for built-in method references. */ var objectProto = Object.prototype;
+/** Used to check objects for own properties. */ var hasOwnProperty = objectProto.hasOwnProperty;
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+ * of values.
+ */ var nativeObjectToString = objectProto.toString;
+/** Built-in value references. */ var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
+/**
+ * A specialized version of `baseGetTag` which ignores `Symbol.toStringTag` values.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @returns {string} Returns the raw `toStringTag`.
+ */ function getRawTag(value) {
+    var isOwn = hasOwnProperty.call(value, symToStringTag), tag = value[symToStringTag];
+    try {
+        value[symToStringTag] = undefined;
+        var unmasked = true;
+    } catch (e) {}
+    var result = nativeObjectToString.call(value);
+    if (unmasked) {
+        if (isOwn) value[symToStringTag] = tag;
+        else delete value[symToStringTag];
+    }
+    return result;
+}
+module.exports = getRawTag;
+
+},{"e9b4533b2a68f814":"7lsL9"}],"bmE3g":[function(require,module,exports,__globalThis) {
+/** Used for built-in method references. */ var objectProto = Object.prototype;
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+ * of values.
+ */ var nativeObjectToString = objectProto.toString;
+/**
+ * Converts `value` to a string using `Object.prototype.toString`.
+ *
+ * @private
+ * @param {*} value The value to convert.
+ * @returns {string} Returns the converted string.
+ */ function objectToString(value) {
+    return nativeObjectToString.call(value);
+}
+module.exports = objectToString;
+
+},{}],"3BLi4":[function(require,module,exports,__globalThis) {
+/**
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ * @example
+ *
+ * _.isObjectLike({});
+ * // => true
+ *
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isObjectLike(_.noop);
+ * // => false
+ *
+ * _.isObjectLike(null);
+ * // => false
+ */ function isObjectLike(value) {
+    return value != null && typeof value == 'object';
+}
+module.exports = isObjectLike;
 
 },{}],"9RSjy":[function(require,module,exports,__globalThis) {
 var global = arguments[3];
